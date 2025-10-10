@@ -40,6 +40,8 @@ function App() {
     //   }
     // }, [isPlaying, currentTrack]);
 
+
+// going back an entire song
   const goBackward = () => {
     if(currentTrack === 0) {
         changeTrack(songs.length - 1);
@@ -50,6 +52,7 @@ function App() {
     setSpeed(1.0);
   }
 
+//   skipping forward a total song
   const goForward = () => {
     if(currentTrack != songs.length - 1) {
         changeTrack(currentTrack + 1);
@@ -60,6 +63,7 @@ function App() {
     setSpeed(1.0);
 }
 
+// formatting our time
 const changeTime = (seconds) => {
     let mins = 0;
     while (seconds > 60) {
