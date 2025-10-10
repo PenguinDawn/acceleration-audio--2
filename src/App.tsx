@@ -23,7 +23,7 @@ function App() {
   const [title, setTitle] = useState("Song Title");
   const [artist, setArtist] = useState("Song Artist");
   const [audioSrc, setAudio] = useState(DeepSnowcapPlay);
-  const [speed, setSpeed] = useState(1.00);
+  const [speed, setSpeed] = useState("1.0");
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTrack, changeTrack] = useState(0);
@@ -31,14 +31,28 @@ function App() {
 
   const audioRef = useRef(null);
 
-    // useEffect(() => {
-    //   if (isPlaying) {
-    //     audioRef.load();
-    //     audioRef.play();
-    //   } else {
-    //     audioRef.pause();
-    //   }
-    // }, [isPlaying, currentTrack]);
+    useEffect(() => {
+      if (isPlaying) {
+        audioRef.current.load();
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+    }, [isPlaying]);
+
+
+// watching our current time to see if it ends
+
+useEffect(() => {
+    setImgSrc(songs[currentTrack].albumArt);
+    setArtist(songs[currentTrack].artist);
+    setAudio(songs[currentTrack].file);
+    setTitle(songs[currentTrack].title);
+    setSpeed("1.0");
+    audioRef.current.load();
+    setProgress(audioRef.current.progress);
+    setDuration(audioRef.current.duration)
+}, [currentTrack])
 
 
 // going back an entire song
@@ -49,7 +63,6 @@ function App() {
     else {
         changeTrack(currentTrack - 1);
     };
-    setSpeed(1.0);
   }
 
 //   skipping forward a total song
@@ -60,19 +73,20 @@ function App() {
     else {
         changeTrack(0);
     };
-    setSpeed(1.0);
 }
 
 // formatting our time
 const changeTime = (seconds) => {
     let mins = 0;
-    while (seconds > 60) {
+    let sec = seconds;
+    while (sec > 60) {
         mins += 1;
+        sec -= 60;
     }
-    if (seconds < 10) {
-        seconds = "0" + seconds.toString() ;
+    if (sec < 10) {
+        sec = "0" + seconds.toString() ;
     }
-    return `${mins}:${seconds}`
+    return `${mins}:${sec}`
 }
 
   return (
@@ -96,9 +110,9 @@ const changeTime = (seconds) => {
                 <progress hidden id="progress" style={{width: "100%"}} max="1" className="bg-blue-300 w-[100%]"></progress>
 
                 <div id="custom-progress" className="w-[100%] h-2 bg-blue-500 trasition-all rounded-full">
-                    <div id="custom-progress-bar" style={{width: `${progress}%`}} className="w-0 h-2 bg-blue-300 z-10 rounded-full"></div>
+                    <div id="custom-progress-bar" style={{width: `${(progress / duration) * 100}%`}} className="w-0 h-2 bg-blue-300 z-10 rounded-full"></div>
                 </div>
-                <p className="text-[12px] text-black items-start" id="seconds">{changeTime(progress)}/{changeTime(duration)}</p>
+                <p className="text-[12px] text-black items-start" id="seconds">{changeTime(progress)}/{duration}</p>
             </p>
         </div>
 
