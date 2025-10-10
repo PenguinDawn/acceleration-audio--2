@@ -36,7 +36,7 @@ function App() {
         audioRef.current.load();
         audioRef.current.play();
       } else {
-        audioRef.current.pause();
+        audio.current.pause();
       }
     }, [isPlaying]);
 
@@ -50,8 +50,7 @@ useEffect(() => {
     setTitle(songs[currentTrack].title);
     setSpeed("1.0");
     audioRef.current.load();
-    setProgress(audioRef.current.progress);
-    setDuration(audioRef.current.duration)
+    // audio.playbackRate(speed);
 }, [currentTrack])
 
 
