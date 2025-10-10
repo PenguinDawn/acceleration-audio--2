@@ -38,7 +38,7 @@ function App() {
     //   } else {
     //     audioRef.pause();
     //   }
-    // }, [isPlaying]);
+    // }, [isPlaying, currentTrack]);
 
   const goBackward = () => {
     if(currentTrack === 0) {
@@ -48,8 +48,6 @@ function App() {
         changeTrack(currentTrack - 1);
     };
     setSpeed(1.0);
-    setIsPlaying(true);
-    // audioPlayer.playbackRate = speed;
   }
 
   const goForward = () => {
@@ -60,9 +58,18 @@ function App() {
         changeTrack(0);
     };
     setSpeed(1.0);
-    // audioPlayer.playbackRate = speed;
 }
 
+const changeTime = (seconds) => {
+    let mins = 0;
+    while (seconds > 60) {
+        mins += 1;
+    }
+    if (seconds < 10) {
+        seconds = "0" + seconds.toString() ;
+    }
+    return `${mins}:${seconds}`
+}
 
   return (
    <div>
@@ -87,7 +94,7 @@ function App() {
                 <div id="custom-progress" className="w-[100%] h-2 bg-blue-500 trasition-all rounded-full">
                     <div id="custom-progress-bar" style={{width: `${progress}%`}} className="w-0 h-2 bg-blue-300 z-10 rounded-full"></div>
                 </div>
-                <p className="text-[12px] text-black items-start" id="seconds">{progress}/{duration}</p>
+                <p className="text-[12px] text-black items-start" id="seconds">{changeTime(progress)}/{changeTime(duration)}</p>
             </p>
         </div>
 
