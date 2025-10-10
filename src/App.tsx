@@ -24,6 +24,8 @@ function App() {
   const [artist, setArtist] = useState("Song Artist");
   const [audioSrc, setAudio] = useState(DeepSnowcapPlay);
   const [speed, setSpeed] = useState(1.00);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [currentTrack, changeTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -83,9 +85,9 @@ function App() {
                 <progress hidden id="progress" style={{width: "100%"}} max="1" className="bg-blue-300 w-[100%]"></progress>
 
                 <div id="custom-progress" className="w-[100%] h-2 bg-blue-500 trasition-all rounded-full">
-                    <div id="custom-progress-bar"  className="w-0 h-2 bg-blue-300 z-10 rounded-full"></div>
+                    <div id="custom-progress-bar" style={{width: `${progress}%`}} className="w-0 h-2 bg-blue-300 z-10 rounded-full"></div>
                 </div>
-                <p className="text-[12px] text-black items-start" id="seconds">0:00/1:00</p>
+                <p className="text-[12px] text-black items-start" id="seconds">{progress}/{duration}</p>
             </p>
         </div>
 
