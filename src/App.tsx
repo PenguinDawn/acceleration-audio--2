@@ -35,8 +35,12 @@ function App() {
       if (isPlaying) {
         audioRef.current.load();
         audioRef.current.play();
+        let intervalId = setInterval(() => {
+          setProgress(audioRef.current.currentTime);
+          setDuration(audioRef.current.duration);
+        }, 500)
       } else {
-        audio.current.pause();
+        audioRef.current.pause();
       }
     }, [isPlaying]);
 
@@ -50,7 +54,7 @@ useEffect(() => {
     setTitle(songs[currentTrack].title);
     setSpeed("1.0");
     audioRef.current.load();
-    // audio.playbackRate(speed);
+    audioRef.current.playbackRate = speed;
 }, [currentTrack])
 
 
@@ -82,8 +86,9 @@ const changeTime = (seconds) => {
         mins += 1;
         sec -= 60;
     }
+    sec = parseInt(sec)
     if (sec < 10) {
-        sec = "0" + seconds.toString() ;
+        sec = "0" + sec.toString() ;
     }
     return `${mins}:${sec}`
 }
@@ -106,12 +111,12 @@ const changeTime = (seconds) => {
         <div className="flex flex-col items-start w-[50%]">
             <audio id="audi" src={audioSrc} hidden controls ref={audioRef}></audio>
             <p className='w-[100%]'>
-                <progress hidden id="progress" style={{width: "100%"}} max="1" className="bg-blue-300 w-[100%]"></progress>
+                <progress hidden id="progress" value={progress / duration} style={{width: "100%"}} max="1" className="bg-blue-300 w-[100%]"></progress>
 
                 <div id="custom-progress" className="w-[100%] h-2 bg-blue-500 trasition-all rounded-full">
                     <div id="custom-progress-bar" style={{width: `${(progress / duration) * 100}%`}} className="w-0 h-2 bg-blue-300 z-10 rounded-full"></div>
                 </div>
-                <p className="text-[12px] text-black items-start" id="seconds">{changeTime(progress)}/{duration}</p>
+                <p className="text-[12px] text-black items-start" id="seconds">{changeTime(progress)}/{changeTime(duration)}</p>
             </p>
         </div>
 
