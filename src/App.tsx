@@ -18,6 +18,9 @@ function App() {
     { file: VlogPlay, albumArt: VlogImg, title: "Vlog Beat", artist: "Tunetank"}
 ];
 
+   const [buttonSize, setButton] = useState(30);
+
+
 
   const [imgSrc, setImgSrc] = useState(DeepSnowcapImg);
   const [title, setTitle] = useState("Song Title");
@@ -28,22 +31,78 @@ function App() {
   const [duration, setDuration] = useState(0);
   const [currentTrack, changeTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
+
+  const intervalRef = useRef(null);
   const audioRef = useRef(null);
 
     useEffect(() => {
       if (isPlaying) {
-        audioRef.current.load();
         audioRef.current.play();
-        let intervalId = setInterval(() => {
+        setProgress(audioRef.current.currentTime);
+        setDuration(audioRef.current.duration);
+
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        intervalRef.current = setInterval(() => {
           setProgress(audioRef.current.currentTime);
           setDuration(audioRef.current.duration);
-        }, 500)
+          if(audioRef.current.playbackRate < 2.0) {
+            audioRef.current.playbackRate = (audioRef.current.playbackRate + 0.005);
+            setSpeed(audioRef.current.playbackRate.toFixed(2))
+          }
+
+          if(audioRef.current.currentTime === audioRef.current.duration) {
+                if(currentTrack != songs.length - 1) {
+                    changeTrack(currentTrack + 1);
+                }
+                else {
+                    changeTrack(0);
+                }; }
+        }, 500);
+
       } else {
         audioRef.current.pause();
+         if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
       }
     }, [isPlaying]);
 
+    const handleKeyDown = (event) => {
+    switch (event.key.toLowerCase()) {   
+    case " ":
+      event.preventDefault();
+      setIsPlaying(!isPlaying);
+      break;
+
+    case "m":
+      setIsMuted(!isMuted);
+      audioRef.current.muted = isMuted;
+      break;
+    case "arrowright":
+       event.preventDefault();
+        if((audioRef.current.duration - audioRef.current.currentTime) > 10) {
+            audioRef.current.currentTime = progress + 10;
+            setProgress(audioRef.current.currentTime);
+        }
+      break;
+    case "arrowleft":
+       event.preventDefault();
+        if(progress > 10) {
+            audioRef.current.currentTime = progress - 10;
+            setProgress(audioRef.current.currentTime);
+        }
+        else {
+            audioRef.current.currentTime = 0;
+            setProgress(audioRef.current.currentTime);
+        }
+      break;}
+    }
+
+window.addEventListener('keydown', handleKeyDown);
 
 // watching our current time to see if it ends
 
@@ -53,8 +112,14 @@ useEffect(() => {
     setAudio(songs[currentTrack].file);
     setTitle(songs[currentTrack].title);
     setSpeed("1.0");
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    setIsPlaying(false)
     audioRef.current.load();
-    audioRef.current.playbackRate = speed;
+    setProgress(0);
+    setDuration(0);
+    audioRef.current.playbackRate = 1.0;
 }, [currentTrack])
 
 
@@ -105,7 +170,7 @@ const changeTime = (seconds) => {
         </div>
 
 
-        <p className="bg-blue-300 rounded-sm px-4 py-2">Speed: <span className="font-bold">{speed}</span>x</p>
+        <p className="bg-blue-300 rounded-sm px-4 py-2 text-[18px]">Speed: <span className="font-bold">{speed}</span>x</p>
         
         {/* Audio handling */}
         <div className="flex flex-col items-start w-[50%]">
@@ -116,7 +181,7 @@ const changeTime = (seconds) => {
                 <div id="custom-progress" className="w-[100%] h-2 bg-blue-500 trasition-all rounded-full">
                     <div id="custom-progress-bar" style={{width: `${(progress / duration) * 100}%`}} className="w-0 h-2 bg-blue-300 z-10 rounded-full"></div>
                 </div>
-                <p className="text-[12px] text-black items-start" id="seconds">{changeTime(progress)}/{changeTime(duration)}</p>
+                <p className="text-[14px] text-black items-start" id="seconds">{changeTime(progress)}/{changeTime(duration)}</p>
             </p>
         </div>
 
@@ -125,17 +190,17 @@ const changeTime = (seconds) => {
          <div>
             <div className="button-holder bg-blue-200 p-5 rounded-2xl flex gap-6">
                 <button id="backwards" onClick={goBackward}>
-                    <SkipBack className="text-blue-600 fill-blue-400"></SkipBack>
+                    <SkipBack size={buttonSize} className="text-blue-600 fill-blue-400"></SkipBack>
                 </button>
                 
                 <button id="playButton" onClick={() => setIsPlaying(true)}>
-                    <Play  className="text-blue-600 fill-blue-400"> </Play>
+                    <Play size={buttonSize} className="text-blue-600 fill-blue-400"> </Play>
                 </button>
                 <button id="pauseButton" onClick={() => setIsPlaying(false)}>
-                    <Pause className="text-blue-600 fill-blue-400"> </Pause>
+                    <Pause size={buttonSize} className="text-blue-600 fill-blue-400"> </Pause>
                 </button>
                 <button id="forward" onClick={goForward}>
-                    <SkipForward className="text-blue-600 fill-blue-400"> </SkipForward>
+                    <SkipForward size={buttonSize} className="text-blue-600 fill-blue-400"> </SkipForward>
                 </button>
             </div>
         </div>
