@@ -20,12 +20,11 @@ function App() {
 
    const [buttonSize, setButton] = useState(30);
 
-
-
   const [imgSrc, setImgSrc] = useState(DeepSnowcapImg);
   const [title, setTitle] = useState("Song Title");
   const [artist, setArtist] = useState("Song Artist");
   const [audioSrc, setAudio] = useState(DeepSnowcapPlay);
+  
   const [speed, setSpeed] = useState("1.0");
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
